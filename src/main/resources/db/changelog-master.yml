@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01_user
+      author: AngeloCrl
+      changes:
+        - sqlFile:
+            dbms: mysql
+            encoding: utf8
+            path: changelog/scripts/01_user.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+        id: 02_manufacturer
+        author: AngeloCrl
+        changes:
+            - sqlFile:
+                  dbms: mysql
+                  encoding: utf8
+                  path: changelog/scripts/02_manufacturer.sql
+                  relativeToChangelogFile: true
+                  splitStatements: true
+                  stripComments: true
+  - changeSet:
+      id: 03_car
+      author: AngeloCrl
+      changes:
+        - sqlFile:
+            dbms: mysql
+            encoding: utf8
+            path: changelog/scripts/03_car.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
