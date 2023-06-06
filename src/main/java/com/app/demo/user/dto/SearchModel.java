@@ -1,5 +1,6 @@
 package com.app.demo.user.dto;
 
+import com.app.demo.user.model.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,6 @@ public class SearchModel {
     private String lastName;
 
     private String email;
+
+    private RoleType role;
 }

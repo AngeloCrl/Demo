@@ -19,6 +19,9 @@ public class UserSpecification {
             if (StringUtils.isNotBlank(request.getLastName())) {
                 predicates.add(criteriaBuilder.equal(root.get("lastName"), request.getLastName()));
             }
+            if (request.getRole() != null) {
+                predicates.add(criteriaBuilder.equal(root.join("roles").get("role"), request.getRole()));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
