@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @JsonIgnoreProperties({"userId"})
 public class UserRole implements GrantedAuthority {
-
     public UserRole(RoleType roleType) {
         this.role = roleType;
     }
@@ -22,11 +21,9 @@ public class UserRole implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType role;
-
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -34,5 +31,4 @@ public class UserRole implements GrantedAuthority {
     public String getAuthority() {
         return role.name();
     }
-
 }

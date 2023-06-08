@@ -11,13 +11,11 @@ import java.util.List;
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor<Car> {
 
-     static final String PROJECTION_QUERY = "SELECT c.id AS id, c.brand AS brand, c.model AS model, c.creation_date AS creationDate, c.last_mod_date AS lastModDate, m.name AS manufacturer " +
+     String PROJECTION_QUERY = "SELECT c.id AS id, c.brand AS brand, c.model AS model, c.creation_date AS creationDate, c.last_mod_date AS lastModDate, m.name AS manufacturer " +
             "FROM car c " +
             "JOIN manufacturer m ON c.manufacturer_id=m.id " +
             "WHERE c.id IS NOT NULL";
 
     @Query(value = PROJECTION_QUERY, nativeQuery = true)
     List<ProjectionResult> getResults();
-
-
 }

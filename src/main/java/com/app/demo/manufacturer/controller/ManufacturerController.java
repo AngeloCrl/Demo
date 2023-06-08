@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/manufacturer")
 public class ManufacturerController {
@@ -19,16 +21,27 @@ public class ManufacturerController {
         this.manufacturerService = manufacturerService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<GenericResponse> create(@RequestBody ManufacturerDto dto) {
-        manufacturerService.create(dto);
-        return new ResponseEntity<>(new GenericResponse("Manufacturer created!"), HttpStatus.OK);
+    @PostMapping("/create-update")
+    public ResponseEntity<GenericResponse> createUpdate(@RequestBody ManufacturerDto dto) {
+        manufacturerService.createUpdate(dto);
+        return new ResponseEntity<>(new GenericResponse("Manufacturer Created or Updated!"), HttpStatus.OK);
     }
 
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<GenericResponse> edit(@RequestBody ManufacturerDto dto, @PathVariable("id")Long id) {
-        manufacturerService.edit(dto, id);
-        return new ResponseEntity<>(new GenericResponse("Manufacturer updated!"), HttpStatus.OK);
+    @GetMapping(value = "{id}")
+    public ResponseEntity<ManufacturerDto> findById(@PathVariable("id") Long id) {
+        ManufacturerDto manufacturer = manufacturerService.findById(id);
+        return new ResponseEntity<>(manufacturer, HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ManufacturerDto>> findAll() {
+        List<ManufacturerDto> manufacturers = manufacturerService.findAll();
+        return new ResponseEntity<>(manufacturers, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/id/{id}")
+    public ResponseEntity<GenericResponse> delete(@PathVariable("id") Long id) {
+        manufacturerService.delete(id);
+        return new ResponseEntity<>(new GenericResponse("Deleted Successfully"), HttpStatus.OK);
+    }
 }

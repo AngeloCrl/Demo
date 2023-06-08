@@ -14,4 +14,5 @@ public class CreateUpdateCarDto {
     private String brand;
     private String model;
     private Long manufacturerId;
+    private Long ownerId;
 }

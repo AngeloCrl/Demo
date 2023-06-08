@@ -22,7 +22,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public ResponseEntity<GenericResponse> sendEmail(EmailDto emailDto) {
         AppHelper.logObject(emailDto, "Sending Email");
-
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(emailDto.getRecipient());
         message.setSubject(emailDto.getSubject());

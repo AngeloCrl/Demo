@@ -12,12 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchModel {
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private RoleType role;
+    private String carBrand;
 }

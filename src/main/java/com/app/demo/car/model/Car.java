@@ -1,5 +1,6 @@
 package com.app.demo.car.model;
 
+import com.app.demo.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
@@ -23,6 +24,7 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String brand;
     @Column
     private String model;
@@ -32,6 +34,9 @@ public class Car {
     @Column
     @UpdateTimestamp
     private LocalDateTime lastModDate;
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private User owner;
 
     @Override
     public boolean equals(Object o) {

@@ -54,8 +54,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/car/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/car/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/car/all/projection").permitAll()
-                .antMatchers(HttpMethod.POST, "/manufacturer/create").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/car/id/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/manufacturer/create-update").permitAll()
                 .antMatchers(HttpMethod.PUT, "/manufacturer/edit/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/manufacturer/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/manufacturer/all").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/manufacturer/id/{id}").permitAll()
+
                 // Disallow everything else..
                 .anyRequest().authenticated();
 

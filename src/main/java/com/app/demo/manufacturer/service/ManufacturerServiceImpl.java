@@ -13,12 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Service
 public class ManufacturerServiceImpl implements ManufacturerService {
-
     private final ManufacturerRepository manufacturerRepository;
     private ModelMapper strictModelMapper;
+    private static final String NOT_FOUND = "Entity not found";
     private static final Logger logger = LoggerFactory.getLogger(ManufacturerServiceImpl.class);
 
     @PostConstruct
@@ -32,30 +33,55 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
-    public void create(ManufacturerDto createDto) {
-        AppHelper.logObject(createDto, "Creating Manufacturer");
-        if (createDto.getCars() != null) {
-            createDto.getCars().forEach(car -> car.setBrand(createDto.getName()));
+    public void createUpdate(ManufacturerDto createUpdateDto) {
+        AppHelper.logObject(createUpdateDto, "Creating - Updating Manufacturer");
+        Manufacturer manufacturer = new Manufacturer();
+        if (createUpdateDto.getCars() != null) {
+            createUpdateDto.getCars().forEach(car -> car.setBrand(createUpdateDto.getName()));
         }
-        if(!manufacturerRepository.existsByNameIgnoreCase(createDto.getName())){
-            Manufacturer manufacturer = strictModelMapper.map(createDto, Manufacturer.class);
+        if (createUpdateDto.getId() != null) {
+            manufacturer = manufacturerRepository.findById(createUpdateDto.getId()).orElseThrow(() -> new CustomException(NOT_FOUND, HttpStatus.NOT_FOUND));
+        }
+        try {
+            strictModelMapper.map(createUpdateDto, manufacturer);
             manufacturerRepository.save(manufacturer);
-        }else {
-            throw new CustomException("Manufacturer with name " + createDto.getName() + " already exists.", HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("Exception While Creating - Updating Manufacturer", HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public void edit(ManufacturerDto editDto, Long id) {
-        AppHelper.logObject(editDto, "Editing Manufacturer");
+    public ManufacturerDto findById(Long id) {
+        logger.info("Fetching Manufacturer By Id");
         try {
-            Manufacturer manufacturer = manufacturerRepository.findById(id).orElseThrow(() -> new CustomException("Entity not found", HttpStatus.NOT_FOUND));
-            editDto.getCars().forEach(car -> car.setBrand(editDto.getName()));
-            strictModelMapper.map(editDto, manufacturer);
-            manufacturerRepository.save(manufacturer);
+            Manufacturer manufacturer = manufacturerRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND, HttpStatus.NOT_FOUND));
+            return strictModelMapper.map(manufacturer, ManufacturerDto.class);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new CustomException("Exception While Editing Manufacturer", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Exception While Fetching Manufacturer By Id", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public List<ManufacturerDto> findAll() {
+        logger.info("Fetching All Manufacturers");
+        try {
+            return manufacturerRepository.findAll().stream().map(manufacturer -> strictModelMapper.map(manufacturer, ManufacturerDto.class)).toList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("Exception While Fetching All Manufacturers", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        logger.info("Deleting Manufacturer");
+        try {
+            manufacturerRepository.deleteById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("Exception While Deleting Manufacturer", HttpStatus.BAD_REQUEST);
         }
     }
 }

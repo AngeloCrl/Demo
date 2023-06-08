@@ -99,9 +99,9 @@ public class UserController {
 
     @PutMapping(value = "/edit/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
-    public ResponseEntity<GenericResponse> updateUser(HttpServletRequest req, @PathVariable("id") long id, @RequestBody EditUserDto editUserDto) {
+    public ResponseEntity<GenericResponse> updateUser(HttpServletRequest req, @RequestBody EditUserDto editUserDto) {
         User requester = userService.userInfo(req);
-        userService.edit(editUserDto, requester, id);
+        userService.edit(editUserDto, requester);
         return new ResponseEntity<>(new GenericResponse("updated successfully"), HttpStatus.OK);
     }
 

@@ -176,14 +176,14 @@ public class UserService {
         }
     }
 
-    public void edit(EditUserDto editUserDto, User requester, long id) {
+    public void edit(EditUserDto editUserDto, User requester) {
         AppHelper.logObject(editUserDto, "Editing User");
         boolean canUpdateRoles = requester.getRoles().stream().anyMatch(userRole -> userRole.getRole().equals(RoleType.ROLE_ADMIN));
         if (!canUpdateRoles && (!editUserDto.getEmail().equals(requester.getEmail()) || !editUserDto.getId().equals(requester.getId()))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A user can only update his own profile");
         }
         try {
-            Optional<User> userOptional = userRepository.findById(id);
+            Optional<User> userOptional = userRepository.findById(editUserDto.getId());
             if (userOptional.isPresent()) {
                 User userFromDb = userOptional.get();
                 editUserDetails(editUserDto, canUpdateRoles, userFromDb);
@@ -291,8 +291,7 @@ public class UserService {
 
     private void editUserDetails(EditUserDto editUserDto, boolean canUpdateRoles, User userFromDb) {
         logger.info("Updating User Details");
-        userFromDb.setFirstName(editUserDto.getFirstName());
-        userFromDb.setLastName(editUserDto.getLastName());
+        modelMapper.map(editUserDto, userFromDb);
         updateUserRole(editUserDto, canUpdateRoles, userFromDb);
     }
 

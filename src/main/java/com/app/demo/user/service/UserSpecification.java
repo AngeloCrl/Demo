@@ -1,11 +1,12 @@
 package com.app.demo.user.service;
 
+import com.app.demo.car.model.Car;
 import com.app.demo.user.dto.SearchModel;
 import com.app.demo.user.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +23,21 @@ public class UserSpecification {
             if (request.getRole() != null) {
                 predicates.add(criteriaBuilder.equal(root.join("roles").get("role"), request.getRole()));
             }
+            if (request.getCarBrand() != null) {
+                Subquery<User> subquery = criteriaQuery.subquery(User.class);
+                Root<User> subRoot = subquery.from(User.class);
+                Join<User, Car> carJoin = subRoot.join("cars");
+                subquery.select(subRoot)
+                        .where(criteriaBuilder.and(
+                                criteriaBuilder.equal(carJoin.get("brand"), request.getCarBrand()),
+                                criteriaBuilder.equal(subRoot, root)
+                        ));
+                predicates.add(criteriaBuilder.exists(subquery));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
     private UserSpecification() {
     }
-
 }

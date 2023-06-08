@@ -1,18 +1,15 @@
 package com.app.demo.user.model;
 
+import com.app.demo.car.model.Car;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @NoArgsConstructor
@@ -26,47 +23,33 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String firstName;
-
     @Column(nullable = false)
     private String lastName;
-
     @Column(nullable = false)
     private String email;
-
     @Column(nullable = false)
     private String password;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<UserRole> roles;
-
-//    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Token> tokens;
-
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "owner_id")
-//    private List<Car> cars = new ArrayList<>();
-
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Car> cars;
     @Column(nullable = false)
     private boolean emailVerified;
-
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     @CreationTimestamp
     private LocalDateTime creationDate;
-
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     @UpdateTimestamp
     private LocalDateTime lastModDate;
-
 
     public void addRole(UserRole userRole) {
         if (roles == null) {
             roles = new HashSet<>();
         }
-
         roles.add(userRole);
         userRole.setUser(this);
     }
@@ -85,21 +68,21 @@ public class User {
         }
     }
 
-//    public void addCar(Car car) {
-//        if (cars == null) {
-//            cars = new ArrayList<>();
-//        }
-//        cars.add(car);
-//    }
-//
-//    public void removeCar(Car car) {
-//        cars.remove(car);
-//    }
-//
-//    public void removeAllCars() {
-//        cars.forEach(car -> {
-//            cars.remove(car);
-//        });
-//    }
+    public void addCar(Car car) {
+        if (cars == null) {
+            cars = new ArrayList<>();
+        }
+        cars.add(car);
+    }
+
+    public void removeCar(Car car) {
+        cars.remove(car);
+    }
+
+    public void removeAllCars() {
+        cars.forEach(car -> {
+            cars.remove(car);
+        });
+    }
 
 }

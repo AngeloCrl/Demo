@@ -1,5 +1,6 @@
 package com.app.demo.user.dto;
 
+import com.app.demo.car.dto.CarDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {
-
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
-    List<UserRoleDto> roles;
+    private List<UserRoleDto> roles;
+    private List<CarDto> cars;
 }

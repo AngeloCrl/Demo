@@ -17,8 +17,7 @@ import java.util.Objects;
 public class FileController {
 
     @PostMapping("/upload")
-    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile)
-            throws IOException {
+    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         long size = multipartFile.getSize();
@@ -29,7 +28,6 @@ public class FileController {
         response.setFileName(fileName);
         response.setSize(size);
         response.setDownloadUri("/files/download/" + fileCode);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -42,16 +40,13 @@ public class FileController {
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
-
         if (resource == null) {
             return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
         }
-
         String contentType = "application/octet-stream";
 //        String encodedFilename = UploadDownloadUtil.encodeFilename(resource.getFilename());
 //        String headerValue = "attachment; filename*=UTF-8''" + encodedFilename;
         String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
