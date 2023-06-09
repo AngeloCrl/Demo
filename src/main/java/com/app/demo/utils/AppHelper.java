@@ -17,6 +17,9 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class AppHelper {
 
+    private AppHelper() {
+    }
+
     public static ModelMapper initStrictModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);

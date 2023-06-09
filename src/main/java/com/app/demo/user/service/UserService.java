@@ -38,7 +38,6 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CarRepository carRepository;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
     private final TokenRepository tokenRepository;
@@ -55,19 +54,17 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       CarRepository carRepository,
                        ModelMapper modelMapper,
                        UserMapper userMapper,
                        TokenRepository tokenRepository,
                        PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtTokenProvider,
                        TokenService tokenService,
-                       EmailServiceImpl emailService,
+                       EmailService emailService,
                        AuthenticationManager authenticationManager,
                        @Value("${spring.mail.register.subject}") String registrationMailSubject,
                        @Value("${spring.mail.register.text-msg}") String registrationMailTextMessage) {
         this.userRepository = userRepository;
-        this.carRepository = carRepository;
         this.modelMapper = modelMapper;
         this.userMapper = userMapper;
         this.tokenRepository = tokenRepository;
@@ -123,7 +120,7 @@ public class UserService {
     }
 
     public User register(User user, boolean shouldCreateToken) {
-        AppHelper.logObject(user, "Registering User");
+        logger.info("Registering User");
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new CustomException("Email is already in use", HttpStatus.BAD_REQUEST);
         }

@@ -1,12 +1,10 @@
 package com.app.demo.user.dto;
 
 import com.app.demo.user.model.RoleType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 //@Data
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor

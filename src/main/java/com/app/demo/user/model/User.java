@@ -73,6 +73,7 @@ public class User {
             cars = new ArrayList<>();
         }
         cars.add(car);
+        car.setOwner(this);
     }
 
     public void removeCar(Car car) {

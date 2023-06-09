@@ -3,6 +3,7 @@ package com.app.demo.user.service;
 import com.app.demo.car.model.Car;
 import com.app.demo.user.dto.SearchModel;
 import com.app.demo.user.model.User;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,10 +21,10 @@ public class UserSpecification {
             if (StringUtils.isNotBlank(request.getLastName())) {
                 predicates.add(criteriaBuilder.equal(root.get("lastName"), request.getLastName()));
             }
-            if (request.getRole() != null) {
+            if (ObjectUtils.isNotEmpty(request.getRole())) {
                 predicates.add(criteriaBuilder.equal(root.join("roles").get("role"), request.getRole()));
             }
-            if (request.getCarBrand() != null) {
+            if (ObjectUtils.isNotEmpty(request.getCarBrand())) {
                 Subquery<User> subquery = criteriaQuery.subquery(User.class);
                 Root<User> subRoot = subquery.from(User.class);
                 Join<User, Car> carJoin = subRoot.join("cars");
