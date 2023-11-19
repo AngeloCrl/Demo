@@ -1,0 +1,20 @@
+version: "3"
+services:
+  db:
+    container_name: demo-db
+    image: mysql:8.0.16
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: demo
+    ports:
+      - "3307:3306"
+
+  java-back:
+    container_name: demo-back-end
+    image: demo-app
+    build: ./
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
