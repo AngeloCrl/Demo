@@ -1,5 +1,6 @@
 package com.app.demo.user.service;
 
+import com.app.demo.car.repository.CarRepository;
 import com.app.demo.email.EmailDto;
 import com.app.demo.email.EmailService;
 import com.app.demo.security.JwtTokenProvider;
@@ -38,6 +39,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CarRepository carRepository;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
     private final TokenRepository tokenRepository;
@@ -54,7 +56,7 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       ModelMapper modelMapper,
+                       CarRepository carRepository, ModelMapper modelMapper,
                        UserMapper userMapper,
                        TokenRepository tokenRepository,
                        PasswordEncoder passwordEncoder,
@@ -65,6 +67,7 @@ public class UserService {
                        @Value("${spring.mail.register.subject}") String registrationMailSubject,
                        @Value("${spring.mail.register.text-msg}") String registrationMailTextMessage) {
         this.userRepository = userRepository;
+        this.carRepository = carRepository;
         this.modelMapper = modelMapper;
         this.userMapper = userMapper;
         this.tokenRepository = tokenRepository;
@@ -204,15 +207,26 @@ public class UserService {
         if (!canDelete) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A user can only delete his own profile");
         }
+        // We have to manage the owner-car association first, otherwise the user will not be deleted.
+        // This is because we have a bidirectional OneToMany relationship between the uer and the car (a foreign key constraint),
+        // and we do not have set cascade for car when deleting a user.
+        carRepository.findByOwner_Id(id).forEach(car -> {
+            car.setOwner(null);
+            carRepository.save(car);
+        });
         userRepository.deleteById(id);
     }
 
     public void deleteByEmail(String email, User requester) {
-        logger.info("Deleting User By Id");
+        logger.info("Deleting User By Email");
         boolean canDelete = requester.getRoles().stream().anyMatch(userRole -> userRole.getRole().equals(RoleType.ROLE_ADMIN) || requester.getEmail().equals(email));
         if (!canDelete) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A user can only delete his own profile");
         }
+        carRepository.findByOwner_Email(email).forEach(car -> {
+            car.setOwner(null);
+            carRepository.save(car);
+        });
         userRepository.deleteByEmail(email);
     }
 

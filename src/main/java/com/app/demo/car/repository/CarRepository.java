@@ -2,11 +2,13 @@ package com.app.demo.car.repository;
 
 import com.app.demo.car.model.Car;
 import com.app.demo.car.repository.projection.ProjectionResult;
+import com.app.demo.manufacturer.model.Manufacturer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -21,4 +23,5 @@ public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificatio
 
     List<Car> findByManufacturer_Id(Long id);
     List<Car> findByOwner_Id(Long id);
+    List<Car> findByOwner_Email(String email);
 }

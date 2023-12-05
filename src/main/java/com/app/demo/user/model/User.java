@@ -34,7 +34,7 @@ public class User {
     private Set<UserRole> roles;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Token> tokens;
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     private List<Car> cars;
     @Column(nullable = false)
     private boolean emailVerified;
@@ -86,8 +86,6 @@ public class User {
     }
 
     public void removeAllCars() {
-        cars.forEach(car -> {
-            cars.remove(car);
-        });
+        cars.forEach(car -> cars.remove(car));
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -65,11 +66,15 @@ public class CarServiceImpl implements CarService {
         }
         car.setManufacturer(null);
 
-        if (ownerIdDto == null && car.getOwner() != null) {
-            createUpdateCarDto.setOwner(new UserIdDto(car.getOwner().getId()));
-        }
-        if (ownerIdDto != null) {
-            car.setOwner(null);
+        Optional<User> owner = userRepository.findById(ownerIdDto.getId());
+
+        if (owner.isPresent()) {
+            if (ownerIdDto == null && car.getOwner() != null) {
+                createUpdateCarDto.setOwner(new UserIdDto(car.getOwner().getId()));
+            }
+            if (ownerIdDto != null) {
+                car.setOwner(null);
+            }
         }
     }
 
@@ -107,10 +112,16 @@ public class CarServiceImpl implements CarService {
     public void delete(Long id) {
         logger.info("Deleting Car");
         try {
-            User user = userRepository.findByCars_Id(id).orElseThrow(() -> new CustomException(String.format("User with carId %s doesn't exist", id), HttpStatus.NOT_FOUND));
-            Car car = carRepository.findById(id).orElseThrow(() -> new CustomException(String.format("Car with id %s doesn't exist", id), HttpStatus.NOT_FOUND));
-            user.removeCar(car);
-            userRepository.save(user);
+            // We have to manage the owner-car association first, otherwise the car will not be deleted.
+            // This is because we have a BIDIRECTIONAL OneToMany relationship between the two.
+            // We do not have to manage the manufacturer-car association like we have to do with the owner,
+            // because the relationship in this case is UNIDIRECTIONAL ManyToOne.
+            Optional<User> user = userRepository.findByCars_Id(id);
+            if (user.isPresent()) {
+                Car car = carRepository.findById(id).orElseThrow(() -> new CustomException(String.format("Car with id %s doesn't exist", id), HttpStatus.NOT_FOUND));
+                user.get().removeCar(car);
+                userRepository.save(user.get());
+            }
             carRepository.deleteById(id);
         } catch (Exception e) {
             e.printStackTrace();

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -70,9 +71,8 @@ public class ManufacturerServiceImpl implements ManufacturerService {
         logger.info("Fetching Manufacturer By Id");
         try {
             Manufacturer manufacturer = manufacturerRepository.findById(id).orElseThrow(() -> new CustomException(String.format("Manufacturer with id %s doesn't exist", id), HttpStatus.NOT_FOUND));
-            List<CarIdDto> cars = carRepository.findByManufacturer_Id(id).stream().map(car -> strictModelMapper.map(car, CarIdDto.class)).toList();
             ManufacturerResponseDto manufacturerResponseDto = strictModelMapper.map(manufacturer, ManufacturerResponseDto.class);
-            manufacturerResponseDto.setCars(cars);
+            manufacturerResponseDto.setCars(carRepository.findByManufacturer_Id(id).stream().map(car -> strictModelMapper.map(car, CarIdDto.class)).toList());
             return manufacturerResponseDto;
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +85,11 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     public List<ManufacturerResponseDto> findAll() {
         logger.info("Fetching All Manufacturers");
         try {
-            return manufacturerRepository.findAll().stream().map(manufacturer -> strictModelMapper.map(manufacturer, ManufacturerResponseDto.class)).toList();
+            return manufacturerRepository.findAll().stream().map(m -> {
+                ManufacturerResponseDto manufacturerResponse = strictModelMapper.map(m, ManufacturerResponseDto.class);
+                manufacturerResponse.setCars(carRepository.findByManufacturer_Id(m.getId()).stream().map(car -> strictModelMapper.map(car, CarIdDto.class)).toList());
+                return manufacturerResponse;
+            }).sorted(Comparator.comparing(ManufacturerResponseDto::getId)).toList();
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException("Exception While Fetching All Manufacturers", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -96,8 +100,18 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     public void delete(Long id) {
         logger.info("Deleting Manufacturer");
         try {
-            carRepository.findByManufacturer_Id(id).forEach(carRepository::delete);
+            // In order for the car to be deleted when we delete the manufacturer, we have to manage the car's associations first,
+            // otherwise neither the manufacturer and the car will be deleted.
+            // This is because in this case we have a unidirectional ManyToOne relationship between the car and the manufacturer,
+            // and a bidirectional OneToMany relationship between the user and the car.
+            carRepository.findByManufacturer_Id(id).forEach(car -> {
+                car.setManufacturer(null);
+                car.setOwner(null);
+                carRepository.save(car);
+                carRepository.delete(car);
+            });
             manufacturerRepository.deleteById(id);
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException("Exception While Deleting Manufacturer", HttpStatus.INTERNAL_SERVER_ERROR);
