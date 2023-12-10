@@ -12,7 +12,7 @@ import com.app.demo.user.model.UserTokenType;
 import com.app.demo.user.service.TokenService;
 import com.app.demo.user.service.UserService;
 import com.app.demo.utils.UserMapper;
-import com.app.demo.utils.response.GenericResponse;
+import com.app.demo.utils.GenericResponse;
 import com.app.demo.utils.exception.CustomException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -68,7 +68,7 @@ public class UserController {
     public ResponseEntity<GenericResponse> register(@ApiParam("RegisterDto")
                                                     @Valid @RequestBody RegisterDto registerDto) {
         userService.register(userMapper.registerDtoToUser(registerDto), true);
-        return new ResponseEntity<>(new GenericResponse("Registered Successfully"), HttpStatus.OK);
+        return new ResponseEntity<>(new GenericResponse("Registered Successfully"), HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)

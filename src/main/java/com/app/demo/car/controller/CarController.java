@@ -4,7 +4,7 @@ import com.app.demo.car.dto.CarResponseDto;
 import com.app.demo.car.dto.CreateUpdateCarDto;
 import com.app.demo.car.repository.projection.ProjectionDto;
 import com.app.demo.car.service.CarService;
-import com.app.demo.utils.response.GenericResponse;
+import com.app.demo.utils.GenericResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +31,7 @@ public class CarController {
     public ResponseEntity<GenericResponse> createUpdate(@ApiParam("CreateUpdateCarDto")
                                                         @RequestBody CreateUpdateCarDto dto) {
         carService.createUpdate(dto);
-        return new ResponseEntity<>(new GenericResponse("Car Created or Updated!"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new GenericResponse("Car Created or Updated!"), HttpStatus.OK);
     }
 
     @GetMapping(value = "{id}")

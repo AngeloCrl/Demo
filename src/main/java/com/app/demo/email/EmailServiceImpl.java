@@ -1,7 +1,7 @@
 package com.app.demo.email;
 
 import com.app.demo.utils.AppUtils;
-import com.app.demo.utils.response.GenericResponse;
+import com.app.demo.utils.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ExpressionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,18 +65,16 @@ public class CarServiceImpl implements CarService {
         if (manufacturerIdDto == null && car.getManufacturer() != null) {
             createUpdateCarDto.setManufacturer(new ManufacturerIdDto(car.getManufacturer().getId()));
         }
+
         car.setManufacturer(null);
 
-        Optional<User> owner = userRepository.findById(ownerIdDto.getId());
 
-        if (owner.isPresent()) {
-            if (ownerIdDto == null && car.getOwner() != null) {
-                createUpdateCarDto.setOwner(new UserIdDto(car.getOwner().getId()));
-            }
-            if (ownerIdDto != null) {
-                car.setOwner(null);
-            }
+        if (ownerIdDto == null && car.getOwner() != null) {
+            createUpdateCarDto.setOwner(new UserIdDto(car.getOwner().getId()));
+//            car.getOwner().removeCar(car);
         }
+
+        car.setOwner(null);
     }
 
     @Override

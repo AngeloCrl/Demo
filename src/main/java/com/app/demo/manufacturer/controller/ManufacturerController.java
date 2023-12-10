@@ -3,7 +3,7 @@ package com.app.demo.manufacturer.controller;
 import com.app.demo.manufacturer.dto.CreateEditManufacturerDto;
 import com.app.demo.manufacturer.dto.ManufacturerResponseDto;
 import com.app.demo.manufacturer.service.ManufacturerService;
-import com.app.demo.utils.response.GenericResponse;
+import com.app.demo.utils.GenericResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

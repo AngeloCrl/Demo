@@ -1,4 +1,4 @@
-package com.app.demo.utils.response;
+package com.app.demo.utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
